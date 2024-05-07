@@ -1,0 +1,115 @@
+body, html {
+    height: 100%;
+    margin: 0;
+    overflow: hidden;
+    font-family: Arial, sans-serif;
+}
+
+#webgl-output {
+    width: 100%;
+    height: 70%; /* Ensure the output doesn't push tables down */
+}
+
+button {
+    position: fixed;
+    bottom: 20px;
+    padding: 10px 20px;
+    z-index: 100;
+    background-color: #ddd;
+    border: none;
+    cursor: pointer;
+    border-radius: 5px;
+}
+
+#toggle-crankshaft {
+    left: 30%;
+}
+
+#toggle-cylinder {
+    right: 30%;
+}
+
+#reset-crankshaft, #reset-cylinder {
+    bottom: 110px;
+}
+
+#reset-crankshaft {
+    left: 30%;
+}
+
+#reset-cylinder {
+    right: 30%;
+}
+
+.stopwatch, .cycles {
+    position: fixed;
+    font-size: 14px; /* Reduced font size for space efficiency */
+    background-color: #f8f8f8;
+    padding: 4px 8px; /* Reduced padding */
+    border-radius: 5px;
+    border: 1px solid #ccc;
+}
+
+#stopwatch-crankshaft, #cycle-crankshaft {
+    left: 30%;
+    bottom: 50px;
+}
+
+#stopwatch-cylinder, #cycle-cylinder {
+    right: 30%;
+    bottom: 50px;
+}
+
+#cycle-crankshaft {
+    bottom: 80px;
+}
+
+#cycle-cylinder {
+    bottom: 80px;
+}
+
+#control-panel {
+    position: fixed;
+    top: 90px; /* Adjusted for better spacing */
+    left: 50%;
+    transform: translateX(-50%);
+    background-color: #f0f0f0;
+    border: 1px solid #ddd;
+    padding: 10px;
+    border-radius: 5px;
+}
+
+#cylinder-dimensions, #crankshaft-dimensions {
+    position: fixed;
+    top: 0px; /* Positioned at the top of the page */
+    background: rgba(255, 255, 255, 0.9);
+    padding: 5px 10px; /* Reduced padding for compact display */
+    border-radius: 5px;
+    width: 250px;
+    height: auto; /* Adjust height to auto to fit content without scrolling */
+    max-height: 90%; /* Limit height to 90% of viewport if necessary */
+}
+
+#cylinder-dimensions {
+    right: 20px;
+}
+
+#crankshaft-dimensions {
+    left: 20px;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 12px; /* Smaller font size to fit more content */
+}
+
+th, td {
+    border: 1px solid #ccc;
+    padding: 3px; /* Reduced padding to save space */
+    text-align: left;
+}
+
+th {
+    background-color: #eee;
+}

@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>3D Crankshaft and Cylinder Rotation</title>
+    <style>
+        body, html {
+            height: 100%;
+            margin: 0;
+            overflow: hidden;
+            font-family: Arial, sans-serif;
+        }
+
+        #webgl-output {
+            width: 100%;
+            height: 90%;
+        }
+
+        button {
+            position: fixed;
+            bottom: 20px;
+            padding: 10px 20px;
+            z-index: 100;
+            background-color: #ddd;
+            border: none;
+            cursor: pointer;
+            border-radius: 5px;
+        }
+
+        #toggle-crankshaft {
+            left: 30%;
+        }
+
+        #toggle-cylinder {
+            right: 30%;
+        }
+
+        #reset-crankshaft, #reset-cylinder {
+            bottom: 110px;
+        }
+
+        #reset-crankshaft {
+            left: 30%;
+        }
+
+        #reset-cylinder {
+            right: 30%;
+        }
+
+        .stopwatch, .cycles {
+            position: fixed;
+            font-size: 16px;
+            background-color: #f8f8f8;
+            padding: 5px 10px;
+            border-radius: 5px;
+            border: 1px solid #ccc;
+        }
+
+        #stopwatch-crankshaft, #cycle-crankshaft {
+            left: 30%;
+            bottom: 50px;
+        }
+
+        #stopwatch-cylinder, #cycle-cylinder {
+            right: 30%;
+            bottom: 50px;
+        }
+
+        #cycle-crankshaft {
+            bottom: 80px;
+        }
+
+        #cycle-cylinder {
+            bottom: 80px;
+        }
+
+        #control-panel {
+            position: fixed;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            background-color: #f0f0f0;
+            border: 1px solid #ddd;
+            padding: 10px;
+            border-radius: 5px;
+        }
+
+        #cylinder-dimensions, #crankshaft-dimensions {
+            position: fixed;
+            top: 150px;
+            background: rgba(255, 255, 255, 0.9);
+            padding: 10px;
+            border-radius: 5px;
+            width: 250px;
+        }
+
+        #cylinder-dimensions {
+            right: 20px;
+        }
+
+        #crankshaft-dimensions {
+            left: 20px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        th, td {
+            border: 1px solid #ccc;
+            padding: 5px;
+            text-align: left;
+        }
+
+        th {
+            background-color: #eee;
+        }
+    </style>
+</head>
+<body>
+    <div id="webgl-output"></div>
+    <button id="toggle-crankshaft">Toggle Crankshaft Rotation</button>
+    <button id="toggle-cylinder">Toggle Cylinder Rotation</button>
+    <button id="reset-crankshaft">Reset Crankshaft</button>
+    <button id="reset-cylinder">Reset Cylinder</button>
+    <div id="stopwatch-crankshaft" class="stopwatch">Crankshaft Time: 0s</div>
+    <div id="stopwatch-cylinder" class="stopwatch">Cylinder Time: 0s</div>
+    <div id="cycle-crankshaft" class="cycles">Crankshaft Cycles: 0</div>
+    <div id="cycle-cylinder" class="cycles">Cylinder Cycles: 0</div>
+    <div id="control-panel">
+        <label>Stiffness (k): <input type="number" id="stiffness" value="1000"> N/m</label>
+        <button onclick="calculateMOI()">Calculate MOI and Frequency</button>
+    </div>
+    <div id="cylinder-dimensions">
+        <table>
+            <tr><th colspan="2">Cylinder Dimensions</th></tr>
+            <tr><td>Diameter</td><td>0.15293 m</td></tr>
+            <tr><td>Radius</td><td>0.076465 m</td></tr>
+            <tr><td>Height</td><td>0.227 m</td></tr>
+            <tr><td>Density of Steel</td><td>7830 kg/m³</td></tr>
+        </table>
+    </div>
+    <div id="crankshaft-dimensions">
+        <table>
+            <tr><th colspan="3">Crankshaft Dimensions</th></tr>
+            <tr><td>Section</td><td>Diameter (m)</td><td>Height (m)</td></tr>
+            <tr><td>1</td><td>0.02868</td><td>0.09542</td></tr>
+            <tr><td>2</td><td>0.043</td><td>0.07</td></tr>
+            <tr><td>3</td><td>0.183</td><td>0.02821</td></tr>
+            <tr><td>4</td><td>0.05834</td><td>0.04261</td></tr>
+            <tr><td>5</td><td>0.183</td><td>0.01841</td></tr>
+            <tr><td>6</td><td>0.07</td><td>0.0458</td></tr>
+            <tr><td>7</td><td>0.183</td><td>0.0184</td></tr>
+            <tr><td>8</td><td>0.05834</td><td>0.04261</td></tr>
+            <tr><td>9</td><td>0.1063</td><td>0.0182</td></tr>
+            <tr><td>10</td><td>0.07</td><td>0.0458</td></tr>
+            <tr><td>11</td><td>0.1063</td><td>0.0182</td></tr>
+            <tr><td>12</td><td>0.05834</td><td>0.04261</td></tr>
+            <tr><td>13</td><td>0.183</td><td>0.0184</td></tr>
+            <tr><td>14</td><td>0.07</td><td>0.0458</td></tr>
+            <tr><td>15</td><td>0.183</td><td>0.01841</td></tr>
+            <tr><td>16</td><td>0.05834</td><td>0.04261</td></tr>
+            <tr><td>17</td><td>0.183</td><td>0.02821</td></tr>
+            <tr><td>18</td><td>0.07</td><td>0.0458</td></tr>
+            <tr><td>19</td><td>0.09565</td><td>0.0286</td></tr>
+        </table>
+    </div>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.140.0/build/three.min.js"></script>
+    <script src="app.js"></script>
+</body>
+</html>
